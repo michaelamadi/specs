@@ -1,16 +1,87 @@
-# Frictionless Data Specifications
+# Frictionless Specifications
 
-[![Build Status](http://travis-ci.org/frictionlessdata/specs.svg?branch=master)](http://travis-ci.org/frictionlessdata/specs)
+At the core of the [Frictionless data toolkit][site] are a set of patterns for describing data including Data Package (for datasets), Data Resource (for files) and Table Schema (for tables).
 
-This site is the home for *specifications* related to **Frictionless Data.**
+**This site houses the formal *specifications* of these patterns.**
 
-**Frictionless Data** is about removing the friction in working with data through the development of a set of tools, specifications, and best practices for publishing data. The heart of Frictionless Data is *Data Package*, a containerization format for any kind of data based on existing practices for publishing open-source software.
+For more info about the project as a whole, please visit [frictionlessdata.io][site]
 
-For more info about the project as a whole, please visit [frictionlessdata.io](http://frictionlessdata.io).
+## Overview
 
-## How to contribute
+### What's a Data Package?
 
-### Overview
+A Data Package is a simple container format used to describe and package a collection of data (a dataset).
+
+A Data Package can contain any kind of data. At the same time, Data Packages can be specialized and enriched for specific types of data so there are, for example, Tabular Data Packages for tabular data, Geo Data Packages for geo data etc.
+
+### Data Package Specs Suite
+
+When you look more closely you'll see that Data Package is actually a *suite* of specifications. This suite is made of small specs, many of them usuable on their own, that you can also combine together.
+
+This approach also reflects our philosophy of "small pieces, loosely joined" as well as "make the simple things simple and complex things possible": it easy to just use the piece you need as well to scale up to more complex needs.
+
+For example, for tabular data we can create a Tabular Data Package spec by combining three other specs together: the Data Package spec for the dataset, the Table Schema spec to describe the table structure, and finally CSV or JSON for the data itself.
+
+We also broke down the Data Package spec into Data Package itself and Data Resource. The Data Resource spec just describes an individual data files and a Data Package is a collection of one or more Data Resources with additional dataset-level metadata.
+
+**Example: Data Resource spec + Table Schema spec becomes a Tabular Data Resource spec**
+
+```mermaid
+graph TD
+
+  dr[Data Resource] --add table schema--> tdr[Tabular Data Resource]
+```
+
+**Example: How a Tabular Data Package is composed out of other specs**
+
+```mermaid
+graph TD
+
+  dr[Data Resource] --> tdr
+  tdr[Tabular Data Resource] --> tdp[Tabular Data Package]
+  dp[Data Package] --> tdp
+  jts[Table Schema] --> tdr
+  csvddf[CSV Data Descriptor] -.optional.-> tdr
+  
+  style tdp fill:#f9f,stroke:#333,stroke-width:4px;
+```
+
+
+## Design Philosophy
+
+### Simplicity
+
+Seek zen-like simplicity in which there is nothing to add and nothing to take away.
+
+### Extensibility
+
+Design for extensibility and customisation. This makes hard things possible and permits future evolution -- nothing we build will be perfect.
+
+### Human-editable and machine-usable
+
+Specs should preserve human readability and editability whilst making machine-use easy.
+
+### Reuse
+
+Reuse and build on existing standards and formats.
+
+### Cross technology
+
+Support a broad range of languages, technologies and infrastructures -- avoid being tied to any one specific system.
+
+
+## Contribute
+
+Contributions, comments and corrections are warmly welcomed. Most work proceeds in an RFC-style manner with discussion in the [issue tracker][issues].
+
+Material is kept in a [git repo on GitHub][repo] - fork and submit a pull request to add material. There is also an [issue tracker][issues] which can be used for specific issues or suggestions.
+
+[forum]: https://discuss.okfn.org/c/frictionless-data
+[repo]: https://github.com/frictionlessdata/specs
+[issues]: https://github.com/frictionlessdata/specs/issues
+[site]: http://frictionlessdata.io
+
+## For Editors
 
 This repository is the canonical repository for the core Frictionless Data specifications. The repository features:
 
@@ -44,3 +115,5 @@ See the existing entries in the registry, and then take the following steps to a
 1. Make a new pull request called `registry/{NAME_OF_SPECIFICATION}`
 2. The pull request features a JSON Schema file for the new specification, and adds the spec to `registry.csv`
 3. Write a brief description of the spec as part of the pull request.
+
+<mermaid />

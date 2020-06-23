@@ -1,20 +1,24 @@
+---
 title: Table Schema
----
-slug: table-schema
----
-mediatype: application/vnd.tableschema+json
----
-version: 1.0.0-rc.2
----
-updated: 24 March 2018
----
+version: 1.0
+author: Paul Walsh, Rufus Pollock
 created: 12 November 2012
----
-descriptor: tableschema.json
----
+updated: 4 October 2019
+descriptor: table-schema.json
+mediatype: application/vnd.tableschema+json
 abstract: A simple format to declare a schema for tabular data. The schema is designed to be expressible in JSON.
+sidebar: auto
 ---
-body:
+
+# {{ $page.frontmatter.title }}
+
+{{ $page.frontmatter.abstract }}
+
+<MetadataTable />
+
+## Language
+
+<Language />
 
 ## Introduction
 
@@ -254,7 +258,7 @@ A date without a time.
   library.
 * **\<PATTERN\>**: date/time values in this field can be parsed according to
   `<PATTERN>`. `<PATTERN>` MUST follow the syntax of [standard Python / C
-  strptime][strptime]. (That is, values in the this field should be parseable
+  strptime][strptime]. (That is, values in the this field should be parsable
   by Python / C standard `strptime` using `<PATTERN>`).  Example for `"format": "%d/%m/%y"` which would correspond to dates like: `30/11/14`
 
 #### time
@@ -377,7 +381,7 @@ The corresponding Table Schema is:
 
 The `constraints` property on Table Schema Fields can be used by consumers to list constraints for validating field values. For example, validating the data in a [Tabular Data Resource][tdr] against its Table Schema; or as a means to validate data being collected or updated via a data entry interface.
 
-[tdr]: http://frictionlessdata.io/specs/tabular-data-resource/
+[tdr]: http://specs.frictionlessdata.io/tabular-data-resource/
 
 All constraints `MUST` be tested against the logical representation of data, and the physical representation of constraint values `MAY` be primitive types as possible in JSON, or represented as strings that are castable with the `type` and `format` rules of the field.
 
@@ -410,7 +414,7 @@ properties.
       All
     </td>
     <td>
-      Indicates whether this field is allowed to be `null`. If required is `true`, then `null` is disallowed. See the section on `missingValues` for how, in the physical representation of the data, strings can represent `null` values.
+      Indicates whether this field cannot be <code>null</code>. If required is <code>false</code> (the default), then <code>null</code> is allowed. See the section on <code>missingValues</code> for how, in the physical representation of the data, strings can represent <code>null</code> values.
     </td>
   </tr>
   <tr>
@@ -424,7 +428,7 @@ properties.
       All
     </td>
     <td>
-      If `true`, then all values for that field MUST be unique within the data file in which it is found.
+      If <code>true</code>, then all values for that field MUST be unique within the data file in which it is found.
     </td>
   </tr>
   <tr>
@@ -466,7 +470,7 @@ properties.
       <code>integer, number, date, time, datetime, year, yearmonth</code>
     </td>
     <td>
-      Specifies a minimum value for a field. This is different to `minLength` which checks the number of items in the value. A `minimum` value constraint checks whether a field value is greater than or equal to the specified value. The range checking depends on the `type` of the field. E.g. an integer field may have a minimum value of 100; a date field might have a minimum date. If a `minimum` value constraint is specified then the field descriptor `MUST` contain a `type` key.
+      Specifies a minimum value for a field. This is different to <code>minLength</code> which checks the number of items in the value. A <code>minimum</code> value constraint checks whether a field value is greater than or equal to the specified value. The range checking depends on the <code>type</code> of the field. E.g. an integer field may have a minimum value of 100; a date field might have a minimum date. If a <code>minimum</code> value constraint is specified then the field descriptor <code>MUST</code> contain a <code>type</code> key.
     </td>
   </tr>
   <tr>
@@ -494,7 +498,7 @@ properties.
       <code>string</code>
     </td>
     <td>
-      A regular expression that can be used to test field values. If the regular expression matches then the value is valid. The values of this field `MUST` conform to the standard [XML Schema regular expression syntax](http://www.w3.org/TR/xmlschema-2/#regexs).
+      A regular expression that can be used to test field values. If the regular expression matches then the value is valid. The values of this field <code>MUST</code> conform to the standard [XML Schema regular expression syntax](http://www.w3.org/TR/xmlschema-2/#regexs).
     </td>
   </tr>
   <tr>
@@ -508,7 +512,7 @@ properties.
       All
     </td>
     <td>
-      The value of the field must exactly match a value in the `enum` array.
+      The value of the field must exactly match a value in the <code>enum</code> array.
     </td>
   </tr>
 </table>
@@ -529,8 +533,8 @@ In additional to field descriptors, there are the following "table level" proper
 Many datasets arrive with missing data values, either because a value was not collected or it never existed. Missing values may be indicated simply by the value being empty in other cases a special value may have been used e.g. `-`, `NaN`, `0`, `-9999` etc.
 
 `missingValues` dictates which string values should be treated as `null` values. This conversion to `null` is done before any other attempted type-specific string conversion.
-The default value `[ "" ]` means that empty strings will be converted to null before any other processing takes place. 
-Providing the empty list `[]` means that no conversion to null will be done, on any value. 
+The default value `[ "" ]` means that empty strings will be converted to null before any other processing takes place.
+Providing the empty list `[]` means that no conversion to null will be done, on any value.
 
 
 `missingValues` MUST be an `array` where each entry is a `string`.
@@ -548,7 +552,9 @@ Examples:
 ### Primary Key
 
 A primary key is a field or set of fields that uniquely identifies each row in
-the table.
+the table. Per SQL standards, the fields cannot be `null`, so their use in the
+primary key is equivalent to adding `required: true` to their
+[`constraints`](#constraints).
 
 The `primaryKey` entry in the schema `object` is optional. If present it specifies
 the primary key for this table.
@@ -561,7 +567,7 @@ The `primaryKey`, if present, MUST be:
   value (indicating just one field in the primary key). Strictly, order of
   values in the array does not matter. However, it is RECOMMENDED that one
   follow the order the fields in the `fields` has as client applications may
-  utitlize the order of the primary key list (e.g. in concatenating values
+  utilize the order of the primary key list (e.g. in concatenating values
   together).
 * Or: a single string corresponding to one of the field `name` values in
   the `fields` array (indicating that this field is the primary key). Note that
@@ -688,7 +694,7 @@ An example of a self-referencing foreign key:
 
 **Comment**: Foreign Keys create links between one Table Schema and another Table Schema, and implicitly between the data tables described by those Table Schemas. If the foreign key is referring to another Table Schema how is that other Table Schema discovered? The answer is that a Table Schema will usually be embedded inside some larger descriptor for a dataset, in particular as the schema for a resource in the resources array of a [Data Package][dp]. It is the use of Table Schema in this way that permits a meaningful use of a non-empty `resource` property on the foreign key.
 
-[dp]: http://frictionlessdata.io/specs/data-package/
+[dp]: http://specs.frictionlessdata.io/data-package/
 
 ## Appendix: Related Work
 
